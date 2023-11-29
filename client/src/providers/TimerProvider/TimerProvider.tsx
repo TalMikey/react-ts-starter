@@ -9,6 +9,7 @@ interface TimerContextProps {
     toggleTimer: () => void;
     timer: number;
     setTimer: (value: number) => void;
+    getProgress: () => number;
 }
 
 const MIN_TIME = 15 * 1000;
@@ -56,10 +57,16 @@ export const TimerProvider = ({ children }: TimerProviderProps) => {
         if (didFinished()) {
             reset();
         }
-    }, [elapsedTime, timer, reset])
+    }, [elapsedTime, timer])
+
+    const getProgress = () => {
+        const time = (timer / 100) * (MAX_TIME - MIN_TIME) + MIN_TIME
+        
+        return (elapsedTime / time) * 100;
+    } 
 
     return (
-        <TimerContext.Provider value={{ elapsedTime, toggleTimer, timer, setTimer: value => setTimer(value) }}>
+        <TimerContext.Provider value={{ elapsedTime, toggleTimer, timer, setTimer: value => setTimer(value), getProgress }}>
             {children}
         </TimerContext.Provider>
     );
