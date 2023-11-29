@@ -7,20 +7,17 @@ interface TimerProviderProps {
 interface TimerContextProps {
     elapsedTime: number;
     toggleTimer: () => void;
-    timer: number;
-    setTimer: (value: number) => void;
-    getProgress: () => number;
+    timerEnd: number;
+    setTimerEnd: (value: number) => void;
 }
 
-const MIN_TIME = 15 * 1000;
-const MAX_TIME = 2 * 60 * 1000;
 const DEFAULT_TIME = 60 * 1000;
 
 const TimerContext = createContext<TimerContextProps>({} as TimerContextProps);
 
 export const TimerProvider = ({ children }: TimerProviderProps) => {
     const [elapsedTime, setElapsedTime] = useState<number>(0);
-    const [timer, setTimer] = useState<number>(((DEFAULT_TIME - MIN_TIME) / (MAX_TIME - MIN_TIME)) * 100); // value is 0-100
+    const [timerEnd, setTimerEnd] = useState<number>(DEFAULT_TIME);
     const intervalRef = useRef<number | null>(null);
     
     const start = () => {
@@ -47,26 +44,13 @@ export const TimerProvider = ({ children }: TimerProviderProps) => {
     };
 
     useEffect(() => {
-        const didFinished = () => {
-            const range = MAX_TIME - MIN_TIME;
-            const time = (timer / 100) * range + MIN_TIME;
-    
-            return elapsedTime >= time;
-        };
-
-        if (didFinished()) {
+        if (elapsedTime > timerEnd) {
             reset();
         }
-    }, [elapsedTime, timer])
-
-    const getProgress = () => {
-        const time = (timer / 100) * (MAX_TIME - MIN_TIME) + MIN_TIME
-        
-        return (elapsedTime / time) * 100;
-    } 
+    }, [elapsedTime, timerEnd]);
 
     return (
-        <TimerContext.Provider value={{ elapsedTime, toggleTimer, timer, setTimer: value => setTimer(value), getProgress }}>
+        <TimerContext.Provider value={{ elapsedTime, toggleTimer, timerEnd: timerEnd, setTimerEnd: value => setTimerEnd(value) }}>
             {children}
         </TimerContext.Provider>
     );

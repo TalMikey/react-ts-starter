@@ -10,7 +10,6 @@ const theme = createTheme({
   }
 });
 
-
 export const App = () => (
   <ThemeProvider theme={theme}>
     <Timer/>
