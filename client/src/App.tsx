@@ -1,5 +1,5 @@
+import { Timer } from './Timer';
+
 export const App = () => (
-  <>
-    Hello World!
-  </>
+  <Timer/>
 );
